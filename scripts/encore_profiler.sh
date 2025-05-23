@@ -50,7 +50,7 @@ apply() {
 
 write() {
 	[ ! -f "$2" ] && return 1
-	chmod 644 "$2" >/dev/null 2>&1
+	chmod 664 "$2" >/dev/null 2>&1
 	echo "$1" >"$2" 2>/dev/null
 }
 

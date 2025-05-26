@@ -19,9 +19,21 @@
 - [KernelSU](https://github.com/tiann/KernelSU)
 - [Magisk](https://github.com/topjohnwu/Magisk)  <sup>([无 WebUI](https://github.com/topjohnwu/Magisk/issues/8609#event-15568590949)👀)</sup>
 
-### 也支持在
+## 也支持在
 - [KsuWebUI](https://github.com/5ec1cff/KsuWebUIStandalone)   <sup>▶ 🌐</sup>
 - [MMRL](https://github.com/DerGoogler/MMRL)   <sup>▶ 🌐</sup>
+
+## 贡献翻译
+
+为 encore 项目贡献翻译：
+
+### README 文档翻译
+- 在 `READMEs` 文件夹中创建新文件，命名格式为 `README_<语言代码>.md`（例如：
+  - 简体中文：`README_zh-CN.md`
+  - 日本語：`README_ja-JP.md`
+  - Français：`README_fr-FR.md`
+  - Bahasa Indonesia：`README_id-ID.md`
+- 提交拉取请求至 `main` 分支。
 
 ## 资源
 - [常见问题解答](https://encore.rem01gaming.dev/guide/faq.html) - 常见问题解答

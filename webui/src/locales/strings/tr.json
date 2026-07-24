@@ -47,7 +47,7 @@
         },
         "device_mitigation": {
             "title": "Cihaz seviyesinde zarar azaltma",
-            "description": "Encore Tweak spesifik cihaz hataları azalt"
+            "description": "Encore Tweaks'e özgü cihaz hatalarını azaltır"
         },
         "log_level": {
             "title": "Günlük Seviyesi",
@@ -124,7 +124,7 @@
     "device_mitigation": {
         "title": "Cihazı hafifleştir",
         "toggle_title": "Cihaz hafifletmeyi etkinleştir",
-        "brief": "Cihaz hafifletme bazı cihazlardaki potansiyel ayarları devre dışı bırabakilir. Sorun yaşarsanız kapalı tutun."
+        "brief": "Cihaz hafifletme bazı cihazlardaki potansiyel uyumsuz ince ayarları devre dışı bırakabilir. Sorun yaşarsanız kapalı tutun."
     },
     "disable_tweaks": {
         "title": "Özelleştirmeleri kapat",

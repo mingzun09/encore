@@ -47,6 +47,7 @@
 import { ref, onMounted, onActivated, onDeactivated, onBeforeUnmount } from 'vue'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useEncoreConfigStore } from '@/stores/EncoreConfig'
+import { createDebouncedSave } from '@/helpers/Debounce'
 
 import ArrowLeftIcon from '@/components/icons/ArrowLeft.vue'
 import ToggleSwitch from '@/components/ui/ToggleSwitch.vue'
@@ -57,8 +58,9 @@ const encoreConfigStore = useEncoreConfigStore()
 
 const isLiteModeEnabled = ref(false)
 const videoElement = ref(null)
-const hasUnsavedChanges = ref(false)
 const wakeLock = ref(null)
+
+const debouncedSave = createDebouncedSave(() => encoreConfigStore.saveConfig(), 500)
 
 const playVideo = async () => {
   if (!videoElement.value) return
@@ -137,10 +139,7 @@ onDeactivated(async () => {
 
 onBeforeRouteLeave(async (to, from, next) => {
   try {
-    if (hasUnsavedChanges.value) {
-      await encoreConfigStore.saveConfig()
-      hasUnsavedChanges.value = false
-    }
+    await debouncedSave.flush()
     next()
   } catch (error) {
     console.error('Failed to save on route leave:', error)
@@ -154,6 +153,7 @@ onBeforeUnmount(async () => {
     videoElement.value.removeEventListener('canplay', playVideo)
   }
   await releaseWakeLock()
+  await debouncedSave.flush()
 })
 
 async function toggleLiteMode(enabled) {
@@ -163,7 +163,7 @@ async function toggleLiteMode(enabled) {
       await encoreConfigStore.loadConfig()
     }
     encoreConfigStore.setLiteMode(enabled)
-    hasUnsavedChanges.value = true
+    debouncedSave.trigger()
   } catch (error) {
     console.error('Failed to set lite mode:', error)
     isLiteModeEnabled.value = encoreConfigStore.isLiteModeEnabled
@@ -171,15 +171,6 @@ async function toggleLiteMode(enabled) {
 }
 
 function goBack() {
-  encoreConfigStore
-    .saveConfig()
-    .then(() => {
-      hasUnsavedChanges.value = false
-      router.back()
-    })
-    .catch((error) => {
-      console.error('Failed to save on goBack:', error)
-      router.back()
-    })
+  router.back()
 }
 </script>

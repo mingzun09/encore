@@ -127,11 +127,12 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, shallowRef } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, shallowRef } from 'vue'
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useGamesStore } from '@/stores/Games'
 import { useEncoreConfigStore } from '@/stores/EncoreConfig'
 import * as KernelSU from '@/helpers/KernelSU'
+import { createDebouncedSave } from '@/helpers/Debounce'
 
 import DropdownMenu from '@/components/ui/DropdownMenu.vue'
 import MenuItem from '@/components/ui/MenuItem.vue'
@@ -154,10 +155,10 @@ const appSettings = shallowRef({ isEnabled: false, lite_mode: false, enable_dnd:
 
 const currentApp = ref({})
 const originalSettings = ref({})
-const isLeaving = ref(false)
-const saveTimeout = ref(null)
 const showMenu = ref(false)
 const isGlobalLiteModeEnabled = ref(false)
+
+const debouncedSave = createDebouncedSave(saveSettings, 500)
 
 const liteModeSwitchValue = computed(() => {
   if (!appSettings.value.isEnabled) {
@@ -171,10 +172,15 @@ const liteModeSwitchValue = computed(() => {
   return appSettings.value.lite_mode
 })
 
+watch(appSettings, () => {
+  debouncedSave.trigger()
+})
+
 watch(
   () => route.params.packageName,
-  (newPackageName, oldPackageName) => {
+  async (newPackageName, oldPackageName) => {
     if (newPackageName && newPackageName !== oldPackageName) {
+      await debouncedSave.flush()
       loadAppData(newPackageName)
     }
   },
@@ -187,10 +193,12 @@ onMounted(async () => {
 })
 
 onBeforeRouteLeave(async (to, from, next) => {
-  isLeaving.value = true
-  clearTimeout(saveTimeout.value)
-  await saveSettings()
+  await debouncedSave.flush()
   next()
+})
+
+onBeforeUnmount(async () => {
+  await debouncedSave.flush()
 })
 
 async function loadGlobalConfig() {

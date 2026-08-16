@@ -41,9 +41,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useEncoreConfigStore } from '@/stores/EncoreConfig'
+import { createDebouncedSave } from '@/helpers/Debounce'
 
 import ArrowLeftIcon from '@/components/icons/ArrowLeft.vue'
 import ToggleSwitch from '@/components/ui/ToggleSwitch.vue'
@@ -53,7 +54,8 @@ const router = useRouter()
 const encoreConfigStore = useEncoreConfigStore()
 
 const isDeviceMitigationEnabled = ref(false)
-const hasUnsavedChanges = ref(false)
+
+const debouncedSave = createDebouncedSave(() => encoreConfigStore.saveConfig(), 500)
 
 onMounted(async () => {
   try {
@@ -68,16 +70,16 @@ onMounted(async () => {
 
 onBeforeRouteLeave(async (to, from, next) => {
   try {
-    if (hasUnsavedChanges.value) {
-      await encoreConfigStore.saveConfig()
-      console.log('Settings saved via navigation guard')
-      hasUnsavedChanges.value = false
-    }
+    await debouncedSave.flush()
     next()
   } catch (error) {
     console.error('Failed to save on route leave:', error)
     next(false)
   }
+})
+
+onBeforeUnmount(async () => {
+  await debouncedSave.flush()
 })
 
 async function toggleDeviceMitigation(enabled) {
@@ -89,7 +91,7 @@ async function toggleDeviceMitigation(enabled) {
     }
 
     encoreConfigStore.setDeviceMitigation(enabled)
-    hasUnsavedChanges.value = true
+    debouncedSave.trigger()
     console.log(`Device mitigation ${enabled ? 'enabled' : 'disabled'}`)
   } catch (error) {
     console.error('Failed to set device mitigation:', error)
@@ -98,15 +100,6 @@ async function toggleDeviceMitigation(enabled) {
 }
 
 function goBack() {
-  encoreConfigStore
-    .saveConfig()
-    .then(() => {
-      hasUnsavedChanges.value = false
-      router.back()
-    })
-    .catch((error) => {
-      console.error('Failed to save on goBack:', error)
-      router.back()
-    })
+  router.back()
 }
 </script>

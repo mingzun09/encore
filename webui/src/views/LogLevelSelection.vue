@@ -38,10 +38,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useEncoreConfigStore } from '@/stores/EncoreConfig'
 import { useI18n } from 'vue-i18n'
+import { createDebouncedSave } from '@/helpers/Debounce'
 
 import ArrowLeftIcon from '@/components/icons/ArrowLeft.vue'
 import RadioButton from '@/components/ui/RadioButton.vue'
@@ -80,6 +81,8 @@ const logLevels = [
   },
 ]
 
+const debouncedSave = createDebouncedSave(() => encoreConfigStore.saveConfig(), 500)
+
 onMounted(async () => {
   try {
     if (!encoreConfigStore.isLoaded) {
@@ -92,12 +95,26 @@ onMounted(async () => {
   }
 })
 
+onBeforeRouteLeave(async (to, from, next) => {
+  try {
+    await debouncedSave.flush()
+    next()
+  } catch (error) {
+    console.error('Failed to save on route leave:', error)
+    next(false)
+  }
+})
+
+onBeforeUnmount(async () => {
+  await debouncedSave.flush()
+})
+
 async function selectLogLevel(level) {
   selectedLevel.value = level
 
   try {
     encoreConfigStore.setLogLevel(level)
-    await encoreConfigStore.saveConfig()
+    debouncedSave.trigger()
     console.log(`Log level set to: ${level}`)
   } catch (error) {
     console.error('Failed to save log level:', error)

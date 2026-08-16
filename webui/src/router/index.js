@@ -11,7 +11,6 @@ import DisableTweaks from '@/views/DisableTweaks.vue'
 import GameSettings from '@/views/GameSettings.vue'
 import LanguageSelection from '@/views/LanguageSelection.vue'
 import LogLevelSelection from '@/views/LogLevelSelection.vue'
-import CpuGovernor from '@/views/CpuGovernor.vue'
 import DeviceMitigation from '@/views/DeviceMitigation.vue'
 
 const routes = [
@@ -56,11 +55,6 @@ const routes = [
     path: '/settings/device_mitigation',
     name: 'DeviceMitigation',
     component: DeviceMitigation,
-  },
-  {
-    path: '/settings/cpu_governor',
-    name: 'CpuGovernor',
-    component: CpuGovernor,
   },
   {
     path: '/settings/log_level',

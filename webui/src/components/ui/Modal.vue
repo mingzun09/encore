@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        <div v-if="show" class="fixed inset-0 z-60 flex items-center justify-center bg-black/50 p-4"
             @click="handleOutsideClick">
             <div class="bg-surface rounded-2xl w-full max-w-md max-h-[80vh] flex flex-col overflow-hidden modal-container shadow-xl mx-3"
                 @click.stop>

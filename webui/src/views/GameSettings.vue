@@ -2,7 +2,7 @@
   <div class="page game-settings-page h-full flex flex-col overflow-hidden bg-surface">
     <div class="max-w-3xl mx-auto h-full flex flex-col w-full">
       <div class="flex-none p-5 mb-2 relative z-50">
-        <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <button @click="$router.back()" class="text-on-surface hover:text-primary transition-colors">
               <ArrowLeftIcon class="w-6 h-6 cursor-pointer rtl:rotate-180" />
@@ -21,12 +21,16 @@
 
             <template #content="{ close }">
               <MenuItem @click="() => { handleLaunchApp(); close(); }">
-                <template #icon><OpenInNew :size="20" /></template>
+                <template #icon>
+                  <OpenInNew :size="20" />
+                </template>
                 {{ $t('game_settings.launch_app') }}
               </MenuItem>
 
               <MenuItem @click="() => { handleOpenAppInfo(); close(); }">
-                <template #icon><InformationOutline :size="20" /></template>
+                <template #icon>
+                  <InformationOutline :size="20" />
+                </template>
                 {{ $t('game_settings.app_info') }}
               </MenuItem>
             </template>
@@ -38,48 +42,45 @@
       <!-- Settings Content -->
       <div class="scrollbar-hidden pb-safe-nav flex-1 min-h-0 overflow-y-scroll px-5">
         <div class="space-y-6">
-          <h2 class="text-on-surface-variant text-sm font-medium tracking-wide">
+          <h2 class="text-on-surface-variant text-sm font-medium">
             {{ $t('game_settings.application') }}
           </h2>
 
           <!-- App Info Section -->
           <div class="flex items-center gap-4">
-            <img :src="currentApp.icon" @error="handleImageError" class="w-12 h-12 rounded-full object-cover"
+            <img :src="currentApp.icon" @error="handleImageError" class="w-10.5 h-10.5 rounded-full object-cover"
               :alt="currentApp.appName" />
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-medium text-on-surface truncate">
                 {{ currentApp.appName || currentApp.packageName }}
               </h3>
               <p v-if="currentApp.appName && currentApp.appName !== currentApp.packageName"
-                class="allow-copy text-sm text-on-surface-variant truncate mt-1">
+                class="allow-copy text-sm text-on-surface-variant truncate">
                 {{ currentApp.packageName }}
               </p>
             </div>
           </div>
 
           <!-- Enable Tweaks Section -->
-          <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-1.5">
-                <Candy class="text-primary shrink-0" />
-                <div class="pl-3 pr-4">
-                  <h3 class="text-base font-medium text-on-surface">
-                    {{ $t('game_settings.enable_tweaks') }}
-                  </h3>
-                </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-8">
+              <Candy :size="25" class="text-primary shrink-0" />
+              <div class="pr-4">
+                <h3 class="text-base font-medium text-on-surface">
+                  {{ $t('game_settings.enable_tweaks') }}
+                </h3>
               </div>
-              <ToggleSwitch class="opacity-100!" :model-value="appSettings.isEnabled"
-                @update:model-value="toggleAppEnabled" />
             </div>
+            <ToggleSwitch class="opacity-100!" :model-value="appSettings.isEnabled"
+              @update:model-value="toggleAppEnabled" />
           </div>
 
           <!-- Divider -->
-          <hr class="border-outline-variant opacity-40" />
+          <hr class="border-outline-variant opacity-65 -mx-5" />
 
           <!-- Preferences Section -->
           <div class="space-y-6">
-            <h2 class="text-on-surface-variant text-sm font-medium tracking-wide"
-              :class="{ 'opacity-50': !appSettings.isEnabled }">
+            <h2 class="text-on-surface-variant text-sm font-medium" :class="{ 'opacity-50': !appSettings.isEnabled }">
               {{ $t('game_settings.preferences') }}
             </h2>
 
@@ -87,13 +88,13 @@
               <!-- Lite Mode -->
               <div class="flex items-center justify-between"
                 :class="{ 'opacity-50': !appSettings.isEnabled || isGlobalLiteModeEnabled }">
-                <div class="flex items-center gap-1.5">
-                  <Feather class="shrink-0 text-primary" />
-                  <div class="pl-3 pr-4">
+                <div class="flex items-center gap-8">
+                  <Feather :size="25" class="shrink-0 text-primary" />
+                  <div class="pr-4">
                     <h3 class="text-base font-medium text-on-surface">
                       {{ $t('game_settings.lite_mode') }}
                     </h3>
-                    <p class="text-sm mt-1 text-on-surface-variant">
+                    <p class="text-sm text-on-surface-variant">
                       {{ $t('game_settings.lite_mode_description') }}
                     </p>
                   </div>
@@ -104,13 +105,13 @@
 
               <!-- DND Mode -->
               <div class="flex items-center justify-between" :class="{ 'opacity-50': !appSettings.isEnabled }">
-                <div class="flex items-center gap-1.5">
-                  <NoEntry class="text-primary shrink-0" />
-                  <div class="pl-3 pr-4">
+                <div class="flex items-center gap-8">
+                  <NoEntry :size="25" class="text-primary shrink-0" />
+                  <div class="pr-4">
                     <h3 class="text-base font-medium text-on-surface">
                       {{ $t('game_settings.dnd_mode') }}
                     </h3>
-                    <p class="text-sm text-on-surface-variant mt-1">
+                    <p class="text-sm text-on-surface-variant">
                       {{ $t('game_settings.dnd_mode_description') }}
                     </p>
                   </div>
